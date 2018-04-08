@@ -6,13 +6,16 @@ android {
     defaultConfig {
         applicationId "com.opencv.myopencv"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
                 cppFlags "-std=c++11 -frtti -fexceptions"
+                // 生成.so库的目标平台
+                abiFilters 'armeabi', 'armeabi-v7a'
+
             }
         }
     }
@@ -27,6 +30,12 @@ android {
             path "CMakeLists.txt"
         }
     }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
 }
 
 dependencies {
