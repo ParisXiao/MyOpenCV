@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import static org.opencv.core.Core.compare;
+import static org.opencv.imgproc.Imgproc.GC_PR_FGD;
+
 /**
  * Created by Administrator on 2018/4/8 0008.
  */
@@ -42,7 +45,7 @@ public class GracutActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_grabcut);
         img = (ImageView) findViewById(R.id.img);
         btn = (Button) findViewById(R.id.change);
 
@@ -66,8 +69,8 @@ public class GracutActivity extends Activity {
             @Override
             public void onClick(View v) {
                 final Mat source = Imgcodecs.imread("/sdcard/temp.jpg", Imgcodecs.CV_LOAD_IMAGE_COLOR);
-//                grabCut(source);
-                floodFull(source);
+                grabCut(source);
+//                floodFull(source);
                 Bitmap bit = BitmapFactory.decodeFile("/sdcard/temp1.jpg"); //自定义//路径
                 img.setImageBitmap(bit);
             }
@@ -84,16 +87,17 @@ public class GracutActivity extends Activity {
         Mat firstMask = new Mat();
         Mat bgModel = new Mat();
         Mat fgModel = new Mat();
-        Mat mask;
-        Mat source = new Mat(1, 1, CvType.CV_8U, new Scalar(3.0));
+        Mat mask ;
+
+        Mat source = new Mat(1, 1, CvType.CV_8U, new Scalar(Imgproc.GC_PR_FGD));
         //定义矩形
-        Rect rect = new Rect(50, 50, img.width()-50, img.height()-50);
+        Rect rect = new Rect(0, 0, 200, 300);
 
         //执行grabcut分割
-        Imgproc.grabCut(img, firstMask, rect, bgModel, fgModel, 5, 0);
+        Imgproc.grabCut(img, firstMask, rect, bgModel, fgModel, 1, 0);
 
         //得到前景
-        Core.compare(firstMask, source, firstMask, Core.CMP_EQ);
+        compare(firstMask,source, firstMask, Core.CMP_EQ);
 
         //生成输出图像
         Mat foregound = new Mat(img.size(), CvType.CV_8UC3, new Scalar(255, 255, 255));
@@ -103,7 +107,7 @@ public class GracutActivity extends Activity {
         Imgproc.cvtColor(foregound, mask, Imgproc.COLOR_RGB2GRAY);
         Imgproc.threshold(mask, mask, 254, 255, Imgproc.THRESH_BINARY_INV);
         //挖出后的替代color
-        Mat vols = new Mat(1, 1, CvType.CV_8UC3, new Scalar(139,0,0));
+        Mat vols = new Mat(1, 1, CvType.CV_8UC3, new Scalar(255,0,0));
         img.setTo(vols, mask);
         Imgcodecs.imwrite("/sdcard/temp1.jpg", img);
 

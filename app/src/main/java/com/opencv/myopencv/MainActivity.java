@@ -30,10 +30,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.temp);
-                grabCutFromJNI(bitmap);
-                img.setImageBitmap(bitmap);
-
+                grabCutFromJNI("/sdcard/temp.jpg");
+                Bitmap bit = BitmapFactory.decodeFile("/sdcard/temp2.jpg"); //自定义//路径
+                img.setImageBitmap(bit);
 
             }
         });
@@ -44,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public  native void grabCutFromJNI(Object bitmap);
+    public  native void grabCutFromJNI(String path);
     // Used to load the 'native-lib' library on application startup.
 
 }
